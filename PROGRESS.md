@@ -2,7 +2,7 @@
 
 ## Current State
 
-The project is bootstrapped and working as a standard Vite + React + TypeScript app.
+The project is working as a Vite + React + TypeScript interview flashcard app with local-first study flow.
 
 Build status:
 
@@ -22,30 +22,40 @@ Repository status:
 - SRS review flow with `level 0-7`
 - Card answer editing
 - Backup export/import
-- Supabase-ready local/cloud persistence flow
+- Local/cloud persistence flow extracted into dedicated modules
+- `src/App.tsx` split into smaller files (`components`, `lib`, `types`)
+- Chinese UI copy restored
+- Flashcard flip bug fixed on mobile/webkit-style rendering
+- Simple email + password auth UI prepared for Supabase
 - Supabase schema file
 
 ## Important Files
 
-- App logic: [`src/App.tsx`](./src/App.tsx)
+- App shell: [`src/App.tsx`](./src/App.tsx)
+- UI components: [`src/components`](./src/components)
+- Shared logic: [`src/lib`](./src/lib)
 - Styles: [`src/app.css`](./src/app.css)
 - Question bank: [`all_questions.json`](./all_questions.json)
 - Supabase schema: [`supabase_schema.sql`](./supabase_schema.sql)
 
 ## Known Limitations
 
-- `src/App.tsx` is too large and should be split later.
-- UI copy is currently English because Windows PowerShell encoding previously mangled non-ASCII strings.
-- No dedicated README existed before this update.
+- Supabase is not configured yet on this machine, so account sync still shows the env setup prompt until `.env.local` is added.
+- Password auth is implemented in the UI, but if Supabase keeps `Confirm email` enabled, signup will still require email confirmation.
+- Mobile layout currently feels too dense/cluttered and needs a dedicated pass.
 - No automated tests yet.
 
 ## Recommended Next Steps
 
-1. Split `src/App.tsx` into smaller components and utility modules.
-2. Restore Chinese UI copy carefully, using UTF-8-safe editing only.
-3. Add `.env.local` and connect Supabase for real cloud sync.
-4. Deploy the app after verifying auth redirect URLs.
-5. Add the second-phase features:
+1. Do a mobile-only UI cleanup pass first:
+   - reduce vertical density
+   - tighten card/header spacing
+   - simplify mobile modal/layout rhythm
+2. Add `.env.local` and connect Supabase on the next work session.
+3. In Supabase Dashboard, disable `Confirm email` if the goal is true no-email password signup.
+4. Test signup, signin, signout, and manual sync end-to-end after env setup.
+5. Deploy the app after verifying the auth settings are correct.
+6. Add the second-phase features:
    - management page
    - AI batch import
 
