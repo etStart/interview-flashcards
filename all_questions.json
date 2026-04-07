@@ -347,168 +347,168 @@
       "cards": [
         {
           "id": "tech_0",
-          "q": "useEffectとuseLayoutEffectの違いは何ですか？",
-          "a": "useEffect: ブラウザの描画後に非同期で実行。副作用（API呼び出し、サブスクリプション）に使用。\n\nuseLayoutEffect: DOMの変更後、ブラウザの描画前に同期で実行。DOMサイズ計測や強制同期的なDOM操作が必要な時に使用。\n\n⚠️ 基本はuseEffect。DOM計測が必要な時だけuseLayoutEffectを使う。",
+          "q": "useEffectとuseLayoutEffectの違いは何ですか？ / useEffect和useLayoutEffect的区别是什么？",
+          "a": "useEffect: ブラウザの描画後に非同期で実行。副作用（API呼び出し、サブスクリプション）に使用。\n\nuseLayoutEffect: DOMの変更後、ブラウザの描画前に同期で実行。DOMサイズ計測や強制同期的なDOM操作が必要な時に使用。\n\n⚠️ 基本はuseEffect。DOM計測が必要な時だけuseLayoutEffectを使う。 / useEffect: 在浏览器渲染后异步执行。用于副作用（API调用、订阅）。\n\nuseLayoutEffect: 在DOM变更后、浏览器渲染前同步执行。在需要测量DOM尺寸或强制同步操作DOM时使用。\n\n⚠️ 基本使用useEffect。仅在需要测量DOM时使用useLayoutEffect。",
           "cn": "",
           "tag": "Hooks",
           "mastery": 0
         },
         {
           "id": "tech_1",
-          "q": "useCallbackとuseMemoの違いと使い所は？",
-          "a": "useCallback: 関数をメモ化。子コンポーネントへ関数をpropsとして渡す時、不要な再レンダリングを防ぐ。\n\nuseMemo: 値（計算結果）をメモ化。重い計算処理の結果をキャッシュする時に使用。\n\n使い所:\n・useCallback → 子のReact.memoと組み合わせて再レンダリング防止\n・useMemo → 重い計算（フィルタリング、ソートなど）の最適化",
+          "q": "useCallbackとuseMemoの違いと使い所は？ / useCallback和useMemo的区别和使用场景是什么？",
+          "a": "useCallback: 関数をメモ化。子コンポーネントへ関数をpropsとして渡す時、不要な再レンダリングを防ぐ。\n\nuseMemo: 値（計算結果）をメモ化。重い計算処理の結果をキャッシュする時に使用。\n\n使い所:\n・useCallback → 子のReact.memoと組み合わせて再レンダリング防止\n・useMemo → 重い計算（フィルタリング、ソートなど）の最適化 / useCallback: 缓存函数。当将函数作为props传递给子组件时，防止不必要的重新渲染。\n\nuseMemo: 缓存值（计算结果）。在需要缓存繁重计算处理的结果时使用。\n\n使用场景:\n・useCallback → 与子组件的React.memo结合使用以防止重新渲染\n・useMemo → 优化繁重的计算（过滤、排序等）",
           "cn": "",
           "tag": "Hooks",
           "mastery": 0
         },
         {
           "id": "tech_2",
-          "q": "useRefの主な用途を説明してください",
-          "a": "①DOMへの直接アクセス（フォーカス、スクロール、サイズ取得）\n②レンダリングをトリガーしない値の保持（タイマーID、前回の値など）\n\n// DOMアクセス例\nconst inputRef = useRef(null);\ninputRef.current.focus();\n\n// 値保持例（更新してもre-renderしない）\nconst countRef = useRef(0);\ncountRef.current += 1;",
+          "q": "useRefの主な用途を説明してください / 请说明useRef的主要用途",
+          "a": "①DOMへの直接アクセス（フォーカス、スクロール、サイズ取得）\n②レンダリングをトリガーしない値の保持（タイマーID、前回の値など）\n\n// DOMアクセス例\nconst inputRef = useRef(null);\ninputRef.current.focus();\n\n// 値保持例（更新してもre-renderしない）\nconst countRef = useRef(0);\ncountRef.current += 1; / ①直接访问DOM（焦点、滚动、获取尺寸）\n②保存不触发渲染的值（定时器ID、上一次的值等）\n\n// DOM访问示例\nconst inputRef = useRef(null);\ninputRef.current.focus();\n\n// 值保存示例（更新也不会触发re-render）\nconst countRef = useRef(0);\ncountRef.current += 1;",
           "cn": "",
           "tag": "Hooks",
           "mastery": 0
         },
         {
           "id": "tech_3",
-          "q": "カスタムHooksを作る目的と基本的なパターンは？",
-          "a": "目的: ステートフルなロジックをコンポーネントから分離して再利用する。\n\nルール:\n・関数名は必ずuseで始める\n・内部でReact Hooksを使える\n\n// 例: データフェッチのカスタムHook\nfunction useFetch(url) {\n  const [data, setData] = useState(null);\n  const [loading, setLoading] = useState(true);\n  useEffect(() => {\n    fetch(url).then(r => r.json()).then(d => {\n      setData(d); setLoading(false);\n    });\n  }, [url]);\n  return { data, loading };\n}",
+          "q": "カスタムHooksを作る目的と基本的なパターンは？ / 创建自定义Hooks的目的和基本模式是什么？",
+          "a": "目的: ステートフルなロジックをコンポーネントから分離して再利用する。\n\nルール:\n・関数名は必ずuseで始める\n・内部でReact Hooksを使える\n\n// 例: データフェッチのカスタムHook\nfunction useFetch(url) {\n  const [data, setData] = useState(null);\n  const [loading, setLoading] = useState(true);\n  useEffect(() => {\n    fetch(url).then(r => r.json()).then(d => {\n      setData(d); setLoading(false);\n    });\n  }, [url]);\n  return { data, loading };\n} / 目的: 将状态逻辑从组件中分离以实现复用。\n\n规则:\n・函数名必须以use开头\n・内部可以使用React Hooks\n\n// 示例: 数据获取的自定义Hook\nfunction useFetch(url) {\n  const [data, setData] = useState(null);\n  const [loading, setLoading] = useState(true);\n  useEffect(() => {\n    fetch(url).then(r => r.json()).then(d => {\n      setData(d); setLoading(false);\n    });\n  }, [url]);\n  return { data, loading };\n}",
           "cn": "",
           "tag": "Hooks",
           "mastery": 0
         },
         {
           "id": "tech_4",
-          "q": "useReducerはいつuseStateの代わりに使いますか？",
-          "a": "useReducerが適切な場面:\n①状態が複雑（複数の値が連動して変わる）\n②次の状態が前の状態に依存する\n③状態遷移ロジックをコンポーネント外に分離したい\n\n// 基本パターン\nconst [state, dispatch] = useReducer(reducer, initialState);\n\n// Redux的な思考で状態管理できる\ndispatch({ type: 'INCREMENT' });\n\n目安: useState が3〜4個連動するようなら useReducer を検討する。",
+          "q": "useReducerはいつuseStateの代わりに使いますか？ / 什么时候使用useReducer代替useState？",
+          "a": "useReducerが適切な場面:\n①状態が複雑（複数の値が連動して変わる）\n②次の状態が前の状態に依存する\n③状態遷移ロジックをコンポーネント外に分離したい\n\n// 基本パターン\nconst [state, dispatch] = useReducer(reducer, initialState);\n\n// Redux的な思考で状態管理できる\ndispatch({ type: 'INCREMENT' });\n\n目安: useState が3〜4個連動するようなら useReducer を検討する。 / 适合使用useReducer的场景:\n①状态复杂（多个值联动变化）\n②下一个状态依赖于前一个状态\n③希望将状态转移逻辑分离到组件外部\n\n// 基本模式\nconst [state, dispatch] = useReducer(reducer, initialState);\n\n// 可以用类似Redux的思维管理状态\ndispatch({ type: 'INCREMENT' });\n\n基准: 如果有3~4个useState联动，则考虑使用useReducer。",
           "cn": "",
           "tag": "Hooks",
           "mastery": 0
         },
         {
           "id": "tech_5",
-          "q": "Reactのレンダリング最適化の方法を教えてください",
-          "a": "①React.memo: propsが変わらない限り再レンダリングしない\n②useCallback: 関数をメモ化、子へのprops渡し時に有効\n③useMemo: 重い計算結果をキャッシュ\n④コンポーネント分割: 状態の影響範囲を最小化\n⑤key prop: リストの適切なkey設定で差分検出を最適化\n⑥lazy + Suspense: コンポーネントの遅延ロード\n\n⚠️ 最適化は計測してから。早すぎる最適化は逆効果になることも。",
+          "q": "Reactのレンダリング最適化の方法を教えてください / 请说明React渲染优化的方法",
+          "a": "①React.memo: propsが変わらない限り再レンダリングしない\n②useCallback: 関数をメモ化、子へのprops渡し時に有効\n③useMemo: 重い計算結果をキャッシュ\n④コンポーネント分割: 状態の影響範囲を最小化\n⑤key prop: リストの適切なkey設定で差分検出を最適化\n⑥lazy + Suspense: コンポーネントの遅延ロード\n\n⚠️ 最適化は計測してから。早すぎる最適化は逆効果になることも。 / ①React.memo: 只要props不变就不重新渲染\n②useCallback: 缓存函数，在向子组件传递props时有效\n③useMemo: 缓存繁重的计算结果\n④组件分割: 将状态的影响范围最小化\n⑤key prop: 列表正确设置key优化差异检测\n⑥lazy + Suspense: 组件的延迟加载\n\n⚠️ 优化要在测量之后进行。过早的优化可能会适得其反。",
           "cn": "",
           "tag": "パフォーマンス",
           "mastery": 0
         },
         {
           "id": "tech_6",
-          "q": "ReactのVirtual DOMとは何ですか？なぜ高速ですか？",
-          "a": "Virtual DOM: 実際のDOMのJavaScript上の軽量なコピー。\n\n仕組み:\n①状態変更 → 新しいVirtual DOMを生成\n②前後のVirtual DOMをdiff比較（Reconciliation）\n③差分のみを実際のDOMに反映（最小限のDOM操作）\n\nなぜ高速か:\nDOM操作は重い処理。Virtual DOMで差分計算してから一括でDOM更新することで、不要なDOM操作を最小化できるため。",
+          "q": "ReactのVirtual DOMとは何ですか？なぜ高速ですか？ / React的虚拟DOM是什么？为什么它很快？",
+          "a": "Virtual DOM: 実際のDOMのJavaScript上の軽量なコピー。\n\n仕組み:\n①状態変更 → 新しいVirtual DOMを生成\n②前後のVirtual DOMをdiff比較（Reconciliation）\n③差分のみを実際のDOMに反映（最小限のDOM操作）\n\nなぜ高速か:\nDOM操作は重い処理。Virtual DOMで差分計算してから一括でDOM更新することで、不要なDOM操作を最小化できるため。 / Virtual DOM: 实际DOM在JavaScript中的轻量级副本。\n\n机制:\n①状态变更 → 生成新的Virtual DOM\n②对比前后的Virtual DOM（Reconciliation/协调）\n③仅将差异反映到实际的DOM中（最小化DOM操作）\n\n为什么快:\nDOM操作是繁重的处理。通过在Virtual DOM中计算差异后一次性更新DOM，可以最小化不必要的DOM操作。",
           "cn": "",
           "tag": "パフォーマンス",
           "mastery": 0
         },
         {
           "id": "tech_7",
-          "q": "Context APIとReduxの違いと使い分けは？",
-          "a": "Context API:\n・Reactビルトイン、追加ライブラリ不要\n・小〜中規模アプリに適切\n・頻繁に更新される値には不向き（全消費コンポーネントが再レンダリング）\n\nRedux:\n・大規模アプリ、複雑な状態管理に適切\n・DevToolsでデバッグしやすい\n・boilerplateが多いが、Redux Toolkitで軽減\n\n使い分け:\n・テーマ・言語・ユーザー情報 → Context\n・複雑なビジネスロジック・頻繁更新 → Redux",
+          "q": "Context APIとReduxの違いと使い分けは？ / Context API和Redux的区别与使用场景？",
+          "a": "Context API:\n・Reactビルトイン、追加ライブラリ不要\n・小〜中規模アプリに適切\n・頻繁に更新される値には不向き（全消費コンポーネントが再レンダリング）\n\nRedux:\n・大規模アプリ、複雑な状態管理に適切\n・DevToolsでデバッグしやすい\n・boilerplateが多いが、Redux Toolkitで軽減\n\n使い分け:\n・テーマ・言語・ユーザー情報 → Context\n・複雑なビジネスロジック・頻繁更新 → Redux / Context API:\n・React内置，无需额外库\n・适合中小型应用\n・不适合频繁更新的值（会导致所有消费组件重新渲染）\n\nRedux:\n・适合大型应用、复杂的状态管理\n・使用DevTools易于调试\n・样板代码多，但可用Redux Toolkit减轻\n\n使用场景区分:\n・主题、语言、用户信息 → Context\n・复杂的业务逻辑、频繁更新 → Redux",
           "cn": "",
           "tag": "状態管理",
           "mastery": 0
         },
         {
           "id": "tech_8",
-          "q": "Prop Drillingとは何ですか？どう解決しますか？",
-          "a": "Prop Drilling: 深くネストしたコンポーネントにpropsを渡すため、中間コンポーネントが使わないpropsを受け渡し続ける問題。\n\n解決方法:\n①Context API: グローバルな状態を提供\n②状態管理ライブラリ: Redux、Zustand、Jotaiなど\n③コンポーネント構成の見直し: children propsやコンポジションパターン\n\n// Contextの基本\nconst ThemeContext = createContext();\n// Providerでラップ → 深い子でuseContextで取得",
+          "q": "Prop Drillingとは何ですか？どう解決しますか？ / 什么是Prop Drilling（属性透传）？如何解决？",
+          "a": "Prop Drilling: 深くネストしたコンポーネントにpropsを渡すため、中間コンポーネントが使わないpropsを受け渡し続ける問題。\n\n解決方法:\n①Context API: グローバルな状態を提供\n②状態管理ライブラリ: Redux、Zustand、Jotaiなど\n③コンポーネント構成の見直し: children propsやコンポジションパターン\n\n// Contextの基本\nconst ThemeContext = createContext();\n// Providerでラップ → 深い子でuseContextで取得 / Prop Drilling: 为了向深层嵌套的组件传递props，中间不使用该props的组件也要不断传递下去的问题。\n\n解决方法:\n①Context API: 提供全局状态\n②状态管理库: Redux、Zustand、Jotai等\n③重新审视组件结构: 使用children props或组合模式\n\n// Context的基本使用\nconst ThemeContext = createContext();\n// 用Provider包裹 → 在深层子组件中用useContext获取",
           "cn": "",
           "tag": "状態管理",
           "mastery": 0
         },
         {
           "id": "tech_9",
-          "q": "ReactでTypeScriptを使うメリットは何ですか？",
-          "a": "①コンパイル時に型エラーを検出できる\n②IDEの補完・リファクタリングが強力になる\n③propsの型定義でコンポーネントの仕様が明確になる\n④チームでの大規模開発で保守性が上がる\n\n// 基本的な型定義例\ntype Props = {\n  name: string;\n  age?: number;  // ? = optional\n  onClick: () => void;\n};\n\nconst Button: React.FC<Props> = ({ name, onClick }) => (\n  <button onClick={onClick}>{name}</button>\n);",
+          "q": "ReactでTypeScriptを使うメリットは何ですか？ / 在React中使用TypeScript的好处是什么？",
+          "a": "①コンパイル時に型エラーを検出できる\n②IDEの補完・リファクタリングが強力になる\n③propsの型定義でコンポーネントの仕様が明確になる\n④チームでの大規模開発で保守性が上がる\n\n// 基本的な型定義例\ntype Props = {\n  name: string;\n  age?: number;  // ? = optional\n  onClick: () => void;\n};\n\nconst Button: React.FC<Props> = ({ name, onClick }) => (\n  <button onClick={onClick}>{name}</button>\n); / ①能在编译时检测出类型错误\n②IDE的自动补全和重构功能变得更强大\n③通过props的类型定义，组件的规格变得明确\n④在团队的大规模开发中提高可维护性\n\n// 基本的类型定义示例\ntype Props = {\n  name: string;\n  age?: number;  // ? = 可选\n  onClick: () => void;\n};\n\nconst Button: React.FC<Props> = ({ name, onClick }) => (\n  <button onClick={onClick}>{name}</button>\n);",
           "cn": "",
           "tag": "TypeScript",
           "mastery": 0
         },
         {
           "id": "tech_10",
-          "q": "TypeScriptのinterfaceとtypeの違いは？",
-          "a": "interface:\n・オブジェクトの型定義に特化\n・宣言マージが可能（同名で拡張できる）\n・extendsで継承\n\ntype:\n・より柔軟（ユニオン型、インターセクション型など）\n・宣言マージ不可\n\n// interface\ninterface User { name: string; }\ninterface User { age: number; } // マージされる\n\n// type\ntype Status = 'active' | 'inactive'; // ユニオン型\ntype AdminUser = User & { role: string }; // インターセクション\n\n実務では: オブジェクト型はinterface、それ以外はtypeが一般的。",
+          "q": "TypeScriptのinterfaceとtypeの違いは？ / TypeScript中interface和type的区别是什么？",
+          "a": "interface:\n・オブジェクトの型定義に特化\n・宣言マージが可能（同名で拡張できる）\n・extendsで継承\n\ntype:\n・より柔軟（ユニオン型、インターセクション型など）\n・宣言マージ不可\n\n// interface\ninterface User { name: string; }\ninterface User { age: number; } // マージされる\n\n// type\ntype Status = 'active' | 'inactive'; // ユニオン型\ntype AdminUser = User & { role: string }; // インターセクション\n\n実務では: オブジェクト型はinterface、それ以外はtypeが一般的。 / interface:\n・专用于对象的类型定义\n・可以声明合并（同名可扩展）\n・使用extends继承\n\ntype:\n・更灵活（联合类型、交叉类型等）\n・不可声明合并\n\n// interface\ninterface User { name: string; }\ninterface User { age: number; } // 会被合并\n\n// type\ntype Status = 'active' | 'inactive'; // 联合类型\ntype AdminUser = User & { role: string }; // 交叉类型\n\n实务中: 对象类型一般用interface，其他用type。",
           "cn": "",
           "tag": "TypeScript",
           "mastery": 0
         },
         {
           "id": "tech_11",
-          "q": "コンポーネントの設計原則を教えてください",
-          "a": "①単一責任原則: 1コンポーネントは1つの役割のみ\n②再利用性: 汎用コンポーネントはpropsで柔軟に\n③Presentational / Container分離:\n  ・Presentational: UIのみ（状態なし）\n  ・Container: データ取得・ロジック担当\n④適切な粒度: 細かすぎず、大きすぎず\n⑤Props最小化: 必要最小限のpropsのみ渡す\n\n目安: コンポーネントが100行を超えたら分割を検討する。",
+          "q": "コンポーネントの設計原則を教えてください / 请说明组件的设计原则",
+          "a": "①単一責任原則: 1コンポーネントは1つの役割のみ\n②再利用性: 汎用コンポーネントはpropsで柔軟に\n③Presentational / Container分離:\n  ・Presentational: UIのみ（状態なし）\n  ・Container: データ取得・ロジック担当\n④適切な粒度: 細かすぎず、大きすぎず\n⑤Props最小化: 必要最小限のpropsのみ渡す\n\n目安: コンポーネントが100行を超えたら分割を検討する。 / ①单一职责原则: 一个组件只负责一个功能\n②可复用性: 通用组件通过props保持灵活性\n③Presentational / Container 分离:\n  ・Presentational: 仅UI（无状态）\n  ・Container: 负责数据获取和逻辑\n④合适的粒度: 不要太细，也不要太大\n⑤Props最小化: 只传递必要的最少props\n\n基准: 如果组件超过100行，考虑拆分。",
           "cn": "",
           "tag": "設計",
           "mastery": 0
         },
         {
           "id": "tech_12",
-          "q": "React.forwardRefとは何ですか？",
-          "a": "親コンポーネントから子コンポーネントのDOM要素にrefを渡すための仕組み。\n\n// 子コンポーネント\nconst Input = React.forwardRef((props, ref) => (\n  <input ref={ref} {...props} />\n));\n\n// 親コンポーネント\nconst inputRef = useRef(null);\n<Input ref={inputRef} />\ninputRef.current.focus(); // 子のDOMにアクセスできる\n\n使い所: UIライブラリの入力コンポーネント、フォームのフォーカス制御など。",
+          "q": "React.forwardRefとは何ですか？ / React.forwardRef是什么？",
+          "a": "親コンポーネントから子コンポーネントのDOM要素にrefを渡すための仕組み。\n\n// 子コンポーネント\nconst Input = React.forwardRef((props, ref) => (\n  <input ref={ref} {...props} />\n));\n\n// 親コンポーネント\nconst inputRef = useRef(null);\n<Input ref={inputRef} />\ninputRef.current.focus(); // 子のDOMにアクセスできる\n\n使い所: UIライブラリの入力コンポーネント、フォームのフォーカス制御など。 / 从父组件向子组件的DOM元素传递ref的机制。\n\n// 子组件\nconst Input = React.forwardRef((props, ref) => (\n  <input ref={ref} {...props} />\n));\n\n// 父组件\nconst inputRef = useRef(null);\n<Input ref={inputRef} />\ninputRef.current.focus(); // 可以访问子组件的DOM\n\n使用场景: UI库的输入组件、表单的焦点控制等。",
           "cn": "",
           "tag": "設計",
           "mastery": 0
         },
         {
           "id": "tech_13",
-          "q": "Reactコンポーネントのテストについて説明してください",
-          "a": "主なツール:\n・Jest: テストランナー、アサーション\n・React Testing Library: コンポーネントテスト（ユーザー視点）\n・Vitest: Vite環境向けの高速テストランナー\n\n基本パターン:\n// render → 操作 → assert\ntest('ボタンクリックでカウントアップ', () => {\n  render(<Counter />);\n  fireEvent.click(screen.getByRole('button'));\n  expect(screen.getByText('1')).toBeInTheDocument();\n});\n\n方針: 実装の詳細ではなくユーザーの操作・表示をテストする。",
+          "q": "Reactコンポーネントのテストについて説明してください / 请说明React组件的测试",
+          "a": "主なツール:\n・Jest: テストランナー、アサーション\n・React Testing Library: コンポーネントテスト（ユーザー視点）\n・Vitest: Vite環境向けの高速テストランナー\n\n基本パターン:\n// render → 操作 → assert\ntest('ボタンクリックでカウントアップ', () => {\n  render(<Counter />);\n  fireEvent.click(screen.getByRole('button'));\n  expect(screen.getByText('1')).toBeInTheDocument();\n});\n\n方針: 実装の詳細ではなくユーザーの操作・表示をテストする。 / 主要工具:\n・Jest: 测试运行器、断言\n・React Testing Library: 组件测试（从用户视角）\n・Vitest: 针对Vite环境的高速测试运行器\n\n基本模式:\n// render → 操作 → assert\ntest('点击按钮计数增加', () => {\n  render(<Counter />);\n  fireEvent.click(screen.getByRole('button'));\n  expect(screen.getByText('1')).toBeInTheDocument();\n});\n\n方针: 不测试实现的细节，而是测试用户的操作和显示。",
           "cn": "",
           "tag": "テスト",
           "mastery": 0
         },
         {
           "id": "tech_14",
-          "q": "単体テストと統合テストの違いは？",
-          "a": "単体テスト（Unit Test）:\n・1つの関数・コンポーネントを独立してテスト\n・外部依存をモック化\n・速い、数が多い\n\n統合テスト（Integration Test）:\n・複数のコンポーネントや機能の連携をテスト\n・実際に近い環境でテスト\n・単体より遅いが、より実際の動作に近い\n\nテストピラミッド:\n単体（多）→ 統合（中）→ E2E（少）\n\nReactでは: コンポーネント + Hook + APIの連携を統合テストで確認することが多い。",
+          "q": "単体テストと統合テストの違いは？ / 单元测试和集成测试的区别是什么？",
+          "a": "単体テスト（Unit Test）:\n・1つの関数・コンポーネントを独立してテスト\n・外部依存をモック化\n・速い、数が多い\n\n統合テスト（Integration Test）:\n・複数のコンポーネントや機能の連携をテスト\n・実際に近い環境でテスト\n・単体より遅いが、より実際の動作に近い\n\nテストピラミッド:\n単体（多）→ 統合（中）→ E2E（少）\n\nReactでは: コンポーネント + Hook + APIの連携を統合テストで確認することが多い。 / 单元测试（Unit Test）:\n・独立测试1个函数或组件\n・对外部依赖进行Mock\n・速度快、数量多\n\n集成测试（Integration Test）:\n・测试多个组件或功能的联动\n・在接近真实的环境中测试\n・比单元测试慢，但更接近实际运行情况\n\n测试金字塔:\n单元（多）→ 集成（中）→ E2E（少）\n\n在React中: 经常通过集成测试来确认 组件 + Hook + API 的联动。",
           "cn": "",
           "tag": "テスト",
           "mastery": 0
         },
         {
           "id": "tech_15",
-          "q": "ReactでAPIフェッチを実装するベストプラクティスは？",
-          "a": "①カスタムHookで分離:\nfunction useUsers() {\n  const [data, setData] = useState(null);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState(null);\n  useEffect(() => {\n    fetch('/api/users')\n      .then(r => r.json())\n      .then(setData)\n      .catch(setError)\n      .finally(() => setLoading(false));\n  }, []);\n  return { data, loading, error };\n}\n\n②ライブラリ活用: React Query / SWR\n・キャッシュ、再フェッチ、ローディング状態を自動管理\n・実務ではこちらが主流",
+          "q": "ReactでAPIフェッチを実装するベストプラクティスは？ / 在React中实现API请求的最佳实践是什么？",
+          "a": "①カスタムHookで分離:\nfunction useUsers() {\n  const [data, setData] = useState(null);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState(null);\n  useEffect(() => {\n    fetch('/api/users')\n      .then(r => r.json())\n      .then(setData)\n      .catch(setError)\n      .finally(() => setLoading(false));\n  }, []);\n  return { data, loading, error };\n}\n\n②ライブラリ活用: React Query / SWR\n・キャッシュ、再フェッチ、ローディング状態を自動管理\n・実務ではこちらが主流 / ①通过自定义Hook分离:\nfunction useUsers() {\n  const [data, setData] = useState(null);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState(null);\n  useEffect(() => {\n    fetch('/api/users')\n      .then(r => r.json())\n      .then(setData)\n      .catch(setError)\n      .finally(() => setLoading(false));\n  }, []);\n  return { data, loading, error };\n}\n\n②利用库: React Query / SWR\n・自动管理缓存、重新获取、加载状态\n・实务中这种方式是主流",
           "cn": "",
           "tag": "非同期",
           "mastery": 0
         },
         {
           "id": "tech_16",
-          "q": "async/awaitとPromiseの違いを説明してください",
-          "a": "Promise: 非同期処理の結果を表すオブジェクト。.then()/.catch()でチェーン処理。\n\nasync/await: Promiseをより読みやすく書くための構文糖衣。\n\n// Promise\nfetch(url)\n  .then(r => r.json())\n  .then(data => console.log(data))\n  .catch(err => console.error(err));\n\n// async/await（同じ処理）\nasync function getData() {\n  try {\n    const r = await fetch(url);\n    const data = await r.json();\n    console.log(data);\n  } catch(err) {\n    console.error(err);\n  }\n}\n\n実務ではasync/awaitが読みやすく主流。",
+          "q": "async/awaitとPromiseの違いを説明してください / 请说明async/await和Promise的区别",
+          "a": "Promise: 非同期処理の結果を表すオブジェクト。.then()/.catch()でチェーン処理。\n\nasync/await: Promiseをより読みやすく書くための構文糖衣。\n\n// Promise\nfetch(url)\n  .then(r => r.json())\n  .then(data => console.log(data))\n  .catch(err => console.error(err));\n\n// async/await（同じ処理）\nasync function getData() {\n  try {\n    const r = await fetch(url);\n    const data = await r.json();\n    console.log(data);\n  } catch(err) {\n    console.error(err);\n  }\n}\n\n実務ではasync/awaitが読みやすく主流。 / Promise: 表示异步处理结果的对象。通过.then()/.catch()进行链式调用。\n\nasync/await: 为了让Promise写起来更具可读性的语法糖。\n\n// Promise\nfetch(url)\n  .then(r => r.json())\n  .then(data => console.log(data))\n  .catch(err => console.error(err));\n\n// async/await（相同的处理）\nasync function getData() {\n  try {\n    const r = await fetch(url);\n    const data = await r.json();\n    console.log(data);\n  } catch(err) {\n    console.error(err);\n  }\n}\n\n实务中async/await可读性更好，是主流写法。",
           "cn": "",
           "tag": "非同期",
           "mastery": 0
         },
         {
           "id": "tech_17",
-          "q": "CORSとは何ですか？フロントエンドでどう対処しますか？",
-          "a": "CORS（Cross-Origin Resource Sharing）: ブラウザのセキュリティ機能。異なるオリジン（ドメイン・ポート・プロトコル）へのリクエストを制限する仕組み。\n\nエラーの原因: フロント(localhost:3000) → API(localhost:8080)のような異なるオリジン間通信。\n\n対処法:\n①開発環境: Vite/CRAのproxyを設定\n②本番環境: サーバー側でAccess-Control-Allow-Originヘッダーを設定（バックエンド側の対応）\n③自分でAPIを持つ場合: 同一オリジンにデプロイ",
+          "q": "CORSとは何ですか？フロントエンドでどう対処しますか？ / CORS是什么？前端如何处理？",
+          "a": "CORS（Cross-Origin Resource Sharing）: ブラウザのセキュリティ機能。異なるオリジン（ドメイン・ポート・プロトコル）へのリクエストを制限する仕組み。\n\nエラーの原因: フロント(localhost:3000) → API(localhost:8080)のような異なるオリジン間通信。\n\n対処法:\n①開発環境: Vite/CRAのproxyを設定\n②本番環境: サーバー側でAccess-Control-Allow-Originヘッダーを設定（バックエンド側の対応）\n③自分でAPIを持つ場合: 同一オリジンにデプロイ / CORS（跨域资源共享）: 浏览器的安全功能。限制向不同源（域名、端口、协议）发起请求的机制。\n\n报错原因: 前端(localhost:3000) → API(localhost:8080) 这种不同源之间的通信。\n\n处理方法:\n①开发环境: 配置Vite/CRA的proxy\n②生产环境: 服务端设置Access-Control-Allow-Origin响应头（后端处理）\n③自己拥有API的情况: 部署在同源下",
           "cn": "",
           "tag": "Web基礎",
           "mastery": 0
         },
         {
           "id": "tech_18",
-          "q": "ローカルストレージ・セッションストレージ・Cookieの違いは？",
-          "a": "localStorage:\n・ブラウザを閉じても保持される\n・同一オリジン内でアクセス可能\n・5MB程度\n・HTTPリクエストには含まれない\n\nsessionStorage:\n・タブ/ウィンドウを閉じると消える\n・それ以外はlocalStorageと同じ\n\nCookie:\n・有効期限を設定できる\n・HTTPリクエストに自動で含まれる\n・4KB程度と小さい\n・HttpOnly/Secureフラグでセキュリティ強化可能\n\n使い分け: 認証トークン→Cookie(HttpOnly)、UI設定→localStorage",
+          "q": "ローカルストレージ・セッションストレージ・Cookieの違いは？ / localStorage、sessionStorage和Cookie的区别是什么？",
+          "a": "localStorage:\n・ブラウザを閉じても保持される\n・同一オリジン内でアクセス可能\n・5MB程度\n・HTTPリクエストには含まれない\n\nsessionStorage:\n・タブ/ウィンドウを閉じると消える\n・それ以外はlocalStorageと同じ\n\nCookie:\n・有効期限を設定できる\n・HTTPリクエストに自動で含まれる\n・4KB程度と小さい\n・HttpOnly/Secureフラグでセキュリティ強化可能\n\n使い分け: 認証トークン→Cookie(HttpOnly)、UI設定→localStorage / localStorage:\n・关闭浏览器也会保留\n・同源内可访问\n・大小约5MB\n・不会包含在HTTP请求中\n\nsessionStorage:\n・关闭标签页/窗口就会消失\n・其他和localStorage一样\n\nCookie:\n・可以设置有效期\n・自动包含在HTTP请求中\n・大小约4KB（较小）\n・可通过HttpOnly/Secure标志增强安全性\n\n使用场景: 认证Token→Cookie(HttpOnly)，UI设置→localStorage",
           "cn": "",
           "tag": "Web基礎",
           "mastery": 0
         },
         {
           "id": "tech_19",
-          "q": "Gitのrebaseとmergeはどちらを使いますか？",
-          "a": "merge:\n・マージコミットが作られる\n・履歴が正確に保たれる\n・チームでの共有ブランチに安全\n\nrebase:\n・履歴が直線的になりきれい\n・featureブランチをmainの最新に追随させる時に使用\n・共有ブランチへのrebaseは危険（履歴書き換え）\n\n実務的な使い方:\n・featureブランチ開発中 → rebaseでmainの変更を取り込む\n・featureをmainにマージ → merge（もしくはSquash merge）",
+          "q": "Gitのrebaseとmergeはどちらを使いますか？ / Git的rebase和merge你会用哪个？",
+          "a": "merge:\n・マージコミットが作られる\n・履歴が正確に保たれる\n・チームでの共有ブランチに安全\n\nrebase:\n・履歴が直線的になりきれい\n・featureブランチをmainの最新に追随させる時に使用\n・共有ブランチへのrebaseは危険（履歴書き換え）\n\n実務的な使い方:\n・featureブランチ開発中 → rebaseでmainの変更を取り込む\n・featureをmainにマージ → merge（もしくはSquash merge） / merge:\n・会创建合并提交\n・能准确保留历史记录\n・在团队共享分支上使用比较安全\n\nrebase:\n・历史记录变成一条直线，比较干净\n・在让feature分支追随main分支最新状态时使用\n・向共享分支rebase很危险（会重写历史）\n\n实务中的用法:\n・feature分支开发中 → 用rebase拉取main的变更\n・把feature合并到main → 用merge（或者Squash merge）",
           "cn": "",
           "tag": "Git",
           "mastery": 0
         },
         {
           "id": "tech_20",
-          "q": "GraphQLとREST APIの違いを説明してください",
-          "a": "REST API:\n・エンドポイントごとにリソースが決まっている\n・Over-fetching（不要なデータも取得）が起きやすい\n・Under-fetching（複数リクエスト必要）が起きやすい\n\nGraphQL:\n・1つのエンドポイント（/graphql）\n・必要なフィールドだけ指定して取得できる\n・型システムで自動ドキュメント化\n・クライアント主導でデータ取得\n\n実務経験: 直近のプロジェクトでAWS AppSync + GraphQLを使用。ReactはApollo Clientで連携しました。",
+          "q": "GraphQLとREST APIの違いを説明してください / 请说明GraphQL和REST API的区别",
+          "a": "REST API:\n・エンドポイントごとにリソースが決まっている\n・Over-fetching（不要なデータも取得）が起きやすい\n・Under-fetching（複数リクエスト必要）が起きやすい\n\nGraphQL:\n・1つのエンドポイント（/graphql）\n・必要なフィールドだけ指定して取得できる\n・型システムで自動ドキュメント化\n・クライアント主導でデータ取得\n\n実務経験: 直近のプロジェクトでAWS AppSync + GraphQLを使用。ReactはApollo Clientで連携しました。 / REST API:\n・每个接口对应的资源是固定的\n・容易发生Over-fetching（获取了不需要的数据）\n・容易发生Under-fetching（需要发起多次请求）\n\nGraphQL:\n・只有一个接口（/graphql）\n・可以只指定获取需要的字段\n・通过类型系统自动生成文档\n・客户端主导数据获取\n\n实务经验: 在最近的项目中使用了AWS AppSync + GraphQL。React端通过Apollo Client进行连接。",
           "cn": "",
           "tag": "API",
           "mastery": 0
