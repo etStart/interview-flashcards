@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   describeResultPreview,
   formatNextReview,
@@ -13,15 +13,17 @@ type StudyViewProps = {
   onBack: () => void;
   onRate: (card: DeckEntry, result: ReviewResult) => void;
   onSaveAnswer: (card: DeckEntry, answer: string | null) => Promise<void>;
+  onHideCard: (card: DeckEntry) => Promise<void>;
 };
 
 export default function StudyView(props: StudyViewProps) {
-  const { session, progressMap, onBack, onRate, onSaveAnswer } = props;
+  const { session, progressMap, onBack, onRate, onSaveAnswer, onHideCard } = props;
   const currentCard = session.cards[session.index];
   const currentProgress = currentCard ? getProgressRecord(currentCard.card.id, progressMap) : null;
   const [isFlipped, setIsFlipped] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isHiding, setIsHiding] = useState(false);
   const [draftAnswer, setDraftAnswer] = useState(
     currentCard && currentProgress ? getEditedAnswer(currentCard.card, currentProgress) : "",
   );
@@ -31,6 +33,8 @@ export default function StudyView(props: StudyViewProps) {
 
     setIsFlipped(false);
     setIsEditing(false);
+    setIsSaving(false);
+    setIsHiding(false);
     setDraftAnswer(getEditedAnswer(currentCard.card, currentProgress));
   }, [currentCard?.card.id, currentProgress?.editedAnswer]);
 
@@ -50,9 +54,9 @@ export default function StudyView(props: StudyViewProps) {
         </button>
 
         <section className="completion-card">
-          <span className="eyebrow">学习完成</span>
+          <span className="eyebrow">训练完成</span>
           <h2>{session.groupName} 已完成</h2>
-          <p>这一轮已经结束，学习进度也已经保存。</p>
+          <p>这一轮训练已经结束，可以回到首页继续下一组。</p>
 
           <div className="completion-grid">
             <div>
@@ -60,7 +64,7 @@ export default function StudyView(props: StudyViewProps) {
               <strong>{summary.good}</strong>
             </div>
             <div>
-              <span>有点模糊</span>
+              <span>模糊</span>
               <strong>{summary.blur}</strong>
             </div>
             <div>
@@ -92,10 +96,22 @@ export default function StudyView(props: StudyViewProps) {
     }
   }
 
+  async function handleHide() {
+    const confirmed = window.confirm("隐藏后这道题将不再出现在你的学习中，确定继续吗？");
+    if (!confirmed) return;
+
+    setIsHiding(true);
+    try {
+      await onHideCard(currentCard);
+    } finally {
+      setIsHiding(false);
+    }
+  }
+
   return (
     <div className="screen study-screen">
       <button className="ghost-button" onClick={onBack}>
-        结束本轮
+        返回首页
       </button>
 
       <header className="study-header">
@@ -117,7 +133,7 @@ export default function StudyView(props: StudyViewProps) {
 
       <section className={`flashcard ${isFlipped ? "flipped" : ""}`}>
         <button className="card-face card-front" onClick={() => setIsFlipped(true)}>
-          <span className="card-kicker">题目</span>
+          <span className="card-kicker">问题</span>
           <h3>{currentCard.card.q}</h3>
           <span className="card-hint">点击翻面查看答案</span>
         </button>
@@ -126,7 +142,7 @@ export default function StudyView(props: StudyViewProps) {
           <div className="card-back-head">
             <span className="card-kicker">答案</span>
             <button className="text-button" onClick={() => setIsFlipped(false)}>
-              回到题目
+              收起答案
             </button>
           </div>
 
@@ -154,16 +170,21 @@ export default function StudyView(props: StudyViewProps) {
                   取消
                 </button>
                 <button className="secondary-button" onClick={() => setDraftAnswer(currentCard.card.a)}>
-                  恢复原答案
+                  恢复默认
                 </button>
                 <button className="primary-button" disabled={isSaving} onClick={handleSave}>
-                  {isSaving ? "正在保存..." : "保存答案"}
+                  {isSaving ? "保存中..." : "保存答案"}
                 </button>
               </>
             ) : (
-              <button className="secondary-button" onClick={() => setIsEditing(true)}>
-                编辑答案
-              </button>
+              <>
+                <button className="secondary-button" onClick={() => setIsEditing(true)}>
+                  编辑答案
+                </button>
+                <button className="secondary-button" disabled={isHiding} onClick={handleHide}>
+                  {isHiding ? "隐藏中..." : "删除此题"}
+                </button>
+              </>
             )}
           </div>
         </div>
@@ -171,7 +192,7 @@ export default function StudyView(props: StudyViewProps) {
 
       {isFlipped && !isEditing ? (
         <section className="review-panel">
-          <h3>给这张卡打分</h3>
+          <h3>这次记忆反馈</h3>
           <div className="review-grid">
             <button className="review-button danger" onClick={() => onRate(currentCard, "bad")}>
               <span>忘了</span>

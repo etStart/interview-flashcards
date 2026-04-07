@@ -1,4 +1,4 @@
-﻿import rawBank from "../../all_questions.json";
+import rawBank from "../../all_questions.json";
 import { getProgressRecord, isDue } from "./progress";
 import type { Category, DeckEntry, Group, ProgressMap, RawBank, StudyMode } from "../types";
 
@@ -51,7 +51,9 @@ export function buildDeck(group: Group, categoryIds: string[], mode: StudyMode, 
     })),
   );
 
-  const filtered = entries.filter((entry) => {
+  const visibleEntries = entries.filter((entry) => !getProgressRecord(entry.card.id, progressMap).isHidden);
+
+  const filtered = visibleEntries.filter((entry) => {
     const progress = getProgressRecord(entry.card.id, progressMap);
 
     if (mode === "due") return isDue(progress);

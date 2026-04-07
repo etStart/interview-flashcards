@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   color-scheme: dark;
   font-family:
     "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Yu Gothic", system-ui,
@@ -580,7 +580,11 @@ button {
 
 @media (max-width: 760px) {
   .app-shell {
-    padding: 16px 12px 40px;
+    padding: 14px 12px 88px;
+  }
+
+  .screen {
+    gap: 14px;
   }
 
   .hero,
@@ -590,18 +594,34 @@ button {
   .modal-card,
   .review-panel {
     border-radius: 22px;
-    padding: 18px;
+    padding: 16px;
   }
 
   .hero-stats,
   .group-card-meta,
-  .completion-grid,
-  .review-grid {
-    grid-template-columns: 1fr;
+  .completion-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .hero-stats div,
+  .group-card-meta div,
+  .completion-grid div {
+    padding: 10px;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(1.9rem, 9vw, 2.8rem);
+    margin-bottom: 8px;
+  }
+
+  .hero-copy p,
+  .group-header p {
+    font-size: 0.95rem;
   }
 
   .group-header,
-  .toolbar,
   .panel-head,
   .modal-head,
   .card-back-head,
@@ -609,11 +629,160 @@ button {
   .study-meta,
   .answer-meta {
     align-items: flex-start;
-    flex-direction: column;
+    flex-wrap: wrap;
+  }
+
+  .toolbar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .toolbar button {
+    width: 100%;
+  }
+
+  .toolbar .primary-button {
+    grid-column: 1 / -1;
+  }
+
+  .group-grid,
+  .mode-grid,
+  .review-grid {
+    gap: 12px;
+  }
+
+  .mode-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mode-card strong {
+    font-size: 1.35rem;
+  }
+
+  .group-card {
+    gap: 14px;
+  }
+
+  .group-card-head {
+    flex-wrap: wrap;
+  }
+
+  .pill {
+    padding: 7px 10px;
+    font-size: 0.8rem;
+  }
+
+  .study-screen {
+    gap: 12px;
   }
 
   .flashcard {
-    min-height: 520px;
+    min-height: 0;
+  }
+
+  .card-face {
+    position: static;
+    transform: none;
+    transition: none;
+    padding: 18px;
+    gap: 14px;
+  }
+
+  .card-front h3 {
+    margin: 0;
+    font-size: clamp(1.45rem, 7vw, 1.95rem);
+  }
+
+  .card-back {
+    display: none;
+    margin-top: 12px;
+  }
+
+  .flashcard.flipped .card-front {
+    display: none;
+    pointer-events: auto;
+  }
+
+  .flashcard.flipped .card-back {
+    display: grid;
+  }
+
+  .flashcard:not(.flipped) .card-back {
+    display: none;
+    pointer-events: none;
+  }
+
+  .answer-editor {
+    min-height: 140px;
+  }
+
+  .review-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .review-button {
+    padding: 12px 10px;
+    gap: 6px;
+  }
+
+  .review-button span {
+    font-size: 0.78rem;
+  }
+
+  .review-button strong {
+    font-size: 0.86rem;
+    line-height: 1.35;
+  }
+
+  .modal-shell {
+    align-items: flex-start;
+    overflow-y: auto;
+    padding: 12px;
+  }
+
+  .floating-mode-badge,
+  .toast {
+    width: calc(100% - 24px);
+    justify-content: space-between;
+    text-align: center;
+  }
+
+  .floating-mode-badge {
+    bottom: 12px;
+    padding: 10px 14px;
+  }
+
+  .toast {
+    top: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-stats,
+  .group-card-meta,
+  .completion-grid,
+  .review-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hero-stats > :last-child,
+  .group-card-meta > :last-child,
+  .completion-grid > :last-child,
+  .review-grid > :last-child {
+    grid-column: 1 / -1;
+  }
+
+  .mode-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbar .primary-button {
+    grid-column: auto;
   }
 }
 
@@ -627,3 +796,4 @@ button {
   border-color: rgba(103, 196, 255, 0.48);
   background: rgba(103, 196, 255, 0.14);
 }
+

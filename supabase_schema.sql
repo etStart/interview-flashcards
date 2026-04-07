@@ -5,9 +5,13 @@ create table if not exists public.user_progress (
   last_review_at timestamptz null,
   next_review_at timestamptz null,
   edited_answer text null,
+  is_hidden boolean not null default false,
   updated_at timestamptz not null default timezone('utc', now()),
   primary key (user_id, card_id)
 );
+
+alter table public.user_progress
+  add column if not exists is_hidden boolean not null default false;
 
 create index if not exists user_progress_next_review_idx
   on public.user_progress (user_id, next_review_at);

@@ -29,6 +29,7 @@ export type ProgressRecord = {
   lastReviewAt: string | null;
   nextReviewAt: string | null;
   editedAnswer: string | null;
+  isHidden: boolean;
   updatedAt: string;
 };
 
@@ -87,5 +88,6 @@ export type UserProgressRow = {
   last_review_at: string | null;
   next_review_at: string | null;
   edited_answer: string | null;
+  is_hidden: boolean;
   updated_at: string;
 };

@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getProgressRecord, isDue } from "../lib/progress";
 import { getCategoriesForGroup } from "../lib/questionBank";
 import type { Group, ProgressMap, StudyMode } from "../types";
@@ -21,7 +21,8 @@ export default function GroupView(props: GroupViewProps) {
 
   const selectedCards = categories
     .filter((category) => selectedCategoryIds.includes(category.id))
-    .flatMap((category) => category.cards);
+    .flatMap((category) => category.cards)
+    .filter((card) => !getProgressRecord(card.id, progressMap).isHidden);
 
   const modeCounts = {
     due: selectedCards.filter((card) => isDue(getProgressRecord(card.id, progressMap))).length,
@@ -49,14 +50,14 @@ export default function GroupView(props: GroupViewProps) {
         <div>
           <span className="eyebrow">分组</span>
           <h2>{group.name}</h2>
-          <p>先圈定范围，再开始这一轮学习。</p>
+          <p>选择要练习的分类与模式。</p>
         </div>
         <span className="pill">已选 {selectedCards.length} 张卡片</span>
       </header>
 
       <section className="panel">
         <div className="panel-head">
-          <h3>范围</h3>
+          <h3>分类</h3>
           <button className="text-button" onClick={() => setSelectedCategoryIds(categories.map((category) => category.id))}>
             全选
           </button>
@@ -64,7 +65,8 @@ export default function GroupView(props: GroupViewProps) {
 
         <div className="category-list">
           {categories.map((category) => {
-            const dueCount = category.cards.filter((card) => isDue(getProgressRecord(card.id, progressMap))).length;
+            const visibleCards = category.cards.filter((card) => !getProgressRecord(card.id, progressMap).isHidden);
+            const dueCount = visibleCards.filter((card) => isDue(getProgressRecord(card.id, progressMap))).length;
             const selected = selectedCategoryIds.includes(category.id);
 
             return (
@@ -75,7 +77,7 @@ export default function GroupView(props: GroupViewProps) {
               >
                 <strong>{category.name}</strong>
                 <span>
-                  {category.cards.length} 张卡片 / {dueCount} 张待复习
+                  {visibleCards.length} 张卡片 / {dueCount} 待复习
                 </span>
               </button>
             );
@@ -86,12 +88,12 @@ export default function GroupView(props: GroupViewProps) {
       <section className="panel">
         <div className="panel-head">
           <h3>模式</h3>
-          <span className="pill subtle">范围内 {selectedCards.length} 张卡片</span>
+          <span className="pill subtle">已选 {selectedCards.length} 张卡片</span>
         </div>
 
         <div className="mode-grid">
           <button className="mode-card" onClick={() => onStart(selectedCategoryIds, "due")}>
-            <span>立即复习</span>
+            <span>今日到期</span>
             <strong>{modeCounts.due}</strong>
           </button>
           <button className="mode-card" onClick={() => onStart(selectedCategoryIds, "all")}>
@@ -99,11 +101,11 @@ export default function GroupView(props: GroupViewProps) {
             <strong>{modeCounts.all}</strong>
           </button>
           <button className="mode-card" onClick={() => onStart(selectedCategoryIds, "unseen")}>
-            <span>未学过</span>
+            <span>未学习</span>
             <strong>{modeCounts.unseen}</strong>
           </button>
           <button className="mode-card" onClick={() => onStart(selectedCategoryIds, "forgotten")}>
-            <span>仅 Lv1</span>
+            <span>忘了 Lv1</span>
             <strong>{modeCounts.forgotten}</strong>
           </button>
           <button className="mode-card wide" onClick={() => onStart(selectedCategoryIds, "random")}>

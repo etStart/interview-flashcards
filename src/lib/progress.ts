@@ -1,4 +1,4 @@
-﻿import { SRS_INTERVALS, STORAGE_KEY } from "./constants";
+import { SRS_INTERVALS, STORAGE_KEY } from "./constants";
 import type { BackupFile, ProgressMap, ProgressRecord, QuestionCard, ReviewLevel, ReviewResult } from "../types";
 
 export function clampLevel(level: number): ReviewLevel {
@@ -12,6 +12,7 @@ function createEmptyProgress(cardId: string): ProgressRecord {
     lastReviewAt: null,
     nextReviewAt: null,
     editedAnswer: null,
+    isHidden: false,
     updatedAt: new Date(0).toISOString(),
   };
 }
@@ -26,6 +27,7 @@ export function normalizeProgress(cardId: string, partial?: Partial<ProgressReco
     lastReviewAt: partial?.lastReviewAt ?? null,
     nextReviewAt: partial?.nextReviewAt ?? null,
     editedAnswer: partial?.editedAnswer ?? null,
+    isHidden: Boolean(partial?.isHidden ?? base.isHidden),
     updatedAt: partial?.updatedAt ?? base.updatedAt,
   };
 }
@@ -96,7 +98,7 @@ export function formatNextReview(dateIso: string | null): string {
   const delta = Date.parse(dateIso) - Date.now();
   const day = 24 * 60 * 60 * 1000;
 
-  if (delta <= day && delta >= 0) return "明天";
+  if (delta <= day && delta >= 0) return "今天";
   return `${Math.max(1, Math.round(delta / day))} 天后`;
 }
 
@@ -138,7 +140,7 @@ export function buildBackup(progressMap: ProgressMap): BackupFile {
 export function parseBackup(raw: string): ProgressMap {
   const parsed = JSON.parse(raw) as Partial<BackupFile>;
   if (parsed.version !== 1 || !Array.isArray(parsed.progress)) {
-    throw new Error("备份文件格式无效。");
+    throw new Error("备份文件格式不正确");
   }
 
   return parsed.progress.reduce<ProgressMap>((accumulator, record) => {

@@ -1,4 +1,4 @@
-﻿import { createClient, type Session, type SupabaseClient } from "@supabase/supabase-js";
+import { createClient, type Session, type SupabaseClient } from "@supabase/supabase-js";
 import {
   clampLevel,
   mergeProgressMaps,
@@ -10,6 +10,7 @@ import type { ProgressMap, ProgressRecord, SyncInfo, UserProgressRow } from "../
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+const SYNC_TIMEOUT_MS = 4000;
 
 export const hasSupabaseEnv = Boolean(supabaseUrl && supabaseKey);
 
@@ -23,12 +24,29 @@ export const supabase: SupabaseClient | null = hasSupabaseEnv
     })
   : null;
 
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = window.setTimeout(() => reject(new Error(label)), ms);
+
+    promise.then(
+      (value) => {
+        window.clearTimeout(timer);
+        resolve(value);
+      },
+      (error) => {
+        window.clearTimeout(timer);
+        reject(error);
+      },
+    );
+  });
+}
+
 async function getSession(): Promise<Session | null> {
   if (!supabase) return null;
 
   const {
     data: { session },
-  } = await supabase.auth.getSession();
+  } = await withTimeout(supabase.auth.getSession(), SYNC_TIMEOUT_MS, "恢复登录态超时。");
 
   return session;
 }
@@ -51,6 +69,7 @@ function rowsToProgressMap(rows: UserProgressRow[]): ProgressMap {
       lastReviewAt: row.last_review_at,
       nextReviewAt: row.next_review_at,
       editedAnswer: row.edited_answer,
+      isHidden: row.is_hidden,
       updatedAt: row.updated_at,
     });
     return accumulator;
@@ -65,6 +84,7 @@ function progressToRows(progressMap: ProgressMap, userId: string): UserProgressR
     last_review_at: record.lastReviewAt,
     next_review_at: record.nextReviewAt,
     edited_answer: record.editedAnswer,
+    is_hidden: record.isHidden,
     updated_at: record.updatedAt,
   }));
 }
@@ -74,7 +94,7 @@ async function fetchRemoteProgress(session: Session): Promise<ProgressMap> {
 
   const { data, error } = await supabase
     .from("user_progress")
-    .select("user_id, card_id, level, last_review_at, next_review_at, edited_answer, updated_at")
+    .select("user_id, card_id, level, last_review_at, next_review_at, edited_answer, is_hidden, updated_at")
     .eq("user_id", session.user.id);
 
   if (error) throw error;
@@ -94,26 +114,32 @@ async function pushRemoteProgress(progressMap: ProgressMap, session: Session): P
   if (error) throw error;
 }
 
-export async function hydrateProgress(): Promise<{ progressMap: ProgressMap; syncInfo: SyncInfo }> {
+export async function hydrateProgress(sessionOverride?: Session | null): Promise<{
+  progressMap: ProgressMap;
+  syncInfo: SyncInfo;
+}> {
   const localProgress = readLocalProgress();
-  const session = await getSession();
-
-  if (!session) {
-    return {
-      progressMap: localProgress,
-      syncInfo: localSyncInfo(
-        hasSupabaseEnv ? "当前为本地模式，登录后可开启云同步。" : "当前为本地模式，尚未配置 Supabase。",
-      ),
-    };
-  }
 
   try {
-    const remoteProgress = await fetchRemoteProgress(session);
+    const session = sessionOverride === undefined ? await getSession() : sessionOverride;
+
+    if (!session) {
+      return {
+        progressMap: localProgress,
+        syncInfo: localSyncInfo(
+          hasSupabaseEnv ? "未登录，当前使用本地进度。" : "当前仅本地模式，未配置 Supabase。",
+        ),
+      };
+    }
+
+    const remoteProgress = await withTimeout(fetchRemoteProgress(session), SYNC_TIMEOUT_MS, "拉取云端进度超时。");
     const merged = mergeProgressMaps(localProgress, remoteProgress);
     writeLocalProgress(merged);
 
     if (Object.keys(merged).length > 0) {
-      await pushRemoteProgress(merged, session);
+      void pushRemoteProgress(merged, session).catch((error) => {
+        console.error("background sync failed", error);
+      });
     }
 
     return {
@@ -126,10 +152,11 @@ export async function hydrateProgress(): Promise<{ progressMap: ProgressMap; syn
         message: "云同步已开启。",
       },
     };
-  } catch {
+  } catch (error) {
+    console.error("hydrateProgress failed", error);
     return {
       progressMap: localProgress,
-      syncInfo: localSyncInfo("读取云端数据失败，已回退到本地数据。", session.user.email ?? null),
+      syncInfo: localSyncInfo("云端读取失败，已回退到本地进度。"),
     };
   }
 }
@@ -146,7 +173,7 @@ export async function saveProgressRecord(record: ProgressRecord): Promise<{ sync
   if (!session) {
     return {
       syncInfo: localSyncInfo(
-        hasSupabaseEnv ? "已保存到本地，登录后会自动尝试同步。" : "已保存到本地。",
+        hasSupabaseEnv ? "已保存到本地，登录后可自动同步。" : "已保存到本地。",
       ),
     };
   }
@@ -164,7 +191,7 @@ export async function saveProgressRecord(record: ProgressRecord): Promise<{ sync
     };
   } catch {
     return {
-      syncInfo: localSyncInfo("已保存到本地，但云同步失败。", session.user.email ?? null),
+      syncInfo: localSyncInfo("云端保存失败，已保留本地进度。", session.user.email ?? null),
     };
   }
 }
@@ -180,7 +207,7 @@ export async function mergeImportedBackup(imported: ProgressMap): Promise<{
   if (!session) {
     return {
       progressMap: merged,
-      syncInfo: localSyncInfo("备份已导入到本地存储。"),
+      syncInfo: localSyncInfo("备份已导入到本地。"),
     };
   }
 
@@ -193,13 +220,13 @@ export async function mergeImportedBackup(imported: ProgressMap): Promise<{
         configured: true,
         userEmail: session.user.email ?? null,
         lastSyncedAt: new Date().toISOString(),
-        message: "备份已导入，并同步到云端。",
+        message: "备份已导入并同步到云端。",
       },
     };
   } catch {
     return {
       progressMap: merged,
-      syncInfo: localSyncInfo("备份已导入本地，但云同步失败。", session.user.email ?? null),
+      syncInfo: localSyncInfo("云端同步失败，备份已导入到本地。", session.user.email ?? null),
     };
   }
 }
@@ -220,7 +247,7 @@ export async function signUpWithPassword(email: string, password: string): Promi
     return "注册成功，已自动登录。";
   }
 
-  return "注册请求已提交，但当前 Supabase 仍启用了邮箱确认。若你要完全免邮件登录，请在 Supabase Dashboard 里关闭 Confirm email。";
+  return "注册成功，请检查邮箱确认；若想免确认，请去 Supabase Dashboard 关闭 Confirm email。";
 }
 
 export async function signInWithPassword(email: string, password: string): Promise<string> {
@@ -252,7 +279,7 @@ export async function forceCloudSync(progressMap: ProgressMap): Promise<{
   if (!session) {
     return {
       progressMap,
-      syncInfo: localSyncInfo("尚未登录，暂时无法同步。"),
+      syncInfo: localSyncInfo("你还没有登录。"),
     };
   }
 
@@ -268,7 +295,7 @@ export async function forceCloudSync(progressMap: ProgressMap): Promise<{
       configured: true,
       userEmail: session.user.email ?? null,
       lastSyncedAt: new Date().toISOString(),
-      message: "已完成手动同步。",
+      message: "已完成云端同步。",
     },
   };
 }
