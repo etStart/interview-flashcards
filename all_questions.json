@@ -356,7 +356,7 @@
         {
           "id": "tech_1",
           "q": "useCallbackとuseMemoの違いと使い所は？ / useCallback和useMemo的区别和使用场景是什么？",
-          "a": "useCallback: 関数をメモ化。子コンポーネントへ関数をpropsとして渡す時、不要な再レンダリングを防ぐ。\n\nuseMemo: 値（計算結果）をメモ化。重い計算処理の結果をキャッシュする時に使用。\n\n使い所:\n・useCallback → 子のReact.memoと組み合わせて再レンダリング防止\n・useMemo → 重い計算（フィルタリング、ソートなど）の最適化 / useCallback: 缓存函数。当将函数作为props传递给子组件时，防止不必要的重新渲染。\n\nuseMemo: 缓存值（计算结果）。在需要缓存繁重计算处理的结果时使用。\n\n使用场景:\n・useCallback → 与子组件的React.memo结合使用以防止重新渲染\n・useMemo → 优化繁重的计算（过滤、排序等）",
+          "a": "useCallback 用来缓存函数引用，避免函数重复创建useMemo 用来缓存计算结果，避免重复计算本质上 useCallback 是 useMemo 的一个特例",
           "cn": "",
           "tag": "Hooks",
           "mastery": 0
@@ -364,15 +364,7 @@
         {
           "id": "tech_2",
           "q": "useRefの主な用途を説明してください / 请说明useRef的主要用途",
-          "a": "①DOMへの直接アクセス（フォーカス、スクロール、サイズ取得）\n②レンダリングをトリガーしない値の保持（タイマーID、前回の値など）\n\n// DOMアクセス例\nconst inputRef = useRef(null);\ninputRef.current.focus();\n\n// 値保持例（更新してもre-renderしない）\nconst countRef = useRef(0);\ncountRef.current += 1; / ①直接访问DOM（焦点、滚动、获取尺寸）\n②保存不触发渲染的值（定时器ID、上一次的值等）\n\n// DOM访问示例\nconst inputRef = useRef(null);\ninputRef.current.focus();\n\n// 值保存示例（更新也不会触发re-render）\nconst countRef = useRef(0);\ncountRef.current += 1;",
-          "cn": "",
-          "tag": "Hooks",
-          "mastery": 0
-        },
-        {
-          "id": "tech_3",
-          "q": "カスタムHooksを作る目的と基本的なパターンは？ / 创建自定义Hooks的目的和基本模式是什么？",
-          "a": "目的: ステートフルなロジックをコンポーネントから分離して再利用する。\n\nルール:\n・関数名は必ずuseで始める\n・内部でReact Hooksを使える\n\n// 例: データフェッチのカスタムHook\nfunction useFetch(url) {\n  const [data, setData] = useState(null);\n  const [loading, setLoading] = useState(true);\n  useEffect(() => {\n    fetch(url).then(r => r.json()).then(d => {\n      setData(d); setLoading(false);\n    });\n  }, [url]);\n  return { data, loading };\n} / 目的: 将状态逻辑从组件中分离以实现复用。\n\n规则:\n・函数名必须以use开头\n・内部可以使用React Hooks\n\n// 示例: 数据获取的自定义Hook\nfunction useFetch(url) {\n  const [data, setData] = useState(null);\n  const [loading, setLoading] = useState(true);\n  useEffect(() => {\n    fetch(url).then(r => r.json()).then(d => {\n      setData(d); setLoading(false);\n    });\n  }, [url]);\n  return { data, loading };\n}",
+          "a": "控制 DOM（focus / scroll））\n防抖 / 节流状态\n\n// 请求锁（防重复提交）\n存定时器",
           "cn": "",
           "tag": "Hooks",
           "mastery": 0
@@ -396,7 +388,7 @@
         {
           "id": "tech_6",
           "q": "ReactのVirtual DOMとは何ですか？なぜ高速ですか？ / React的虚拟DOM是什么？为什么它很快？",
-          "a": "Virtual DOM: 実際のDOMのJavaScript上の軽量なコピー。\n\n仕組み:\n①状態変更 → 新しいVirtual DOMを生成\n②前後のVirtual DOMをdiff比較（Reconciliation）\n③差分のみを実際のDOMに反映（最小限のDOM操作）\n\nなぜ高速か:\nDOM操作は重い処理。Virtual DOMで差分計算してから一括でDOM更新することで、不要なDOM操作を最小化できるため。 / Virtual DOM: 实际DOM在JavaScript中的轻量级副本。\n\n机制:\n①状态变更 → 生成新的Virtual DOM\n②对比前后的Virtual DOM（Reconciliation/协调）\n③仅将差异反映到实际的DOM中（最小化DOM操作）\n\n为什么快:\nDOM操作是繁重的处理。通过在Virtual DOM中计算差异后一次性更新DOM，可以最小化不必要的DOM操作。",
+          "a": "Virtual DOM 是内存中的 JS 对象树，状态变化时通过 Diff 算法找出最小差异，再批量更新真实 DOM，从而避免不必要的重排重绘，提升渲染性能。",
           "cn": "",
           "tag": "パフォーマンス",
           "mastery": 0
@@ -404,7 +396,7 @@
         {
           "id": "tech_7",
           "q": "Context APIとReduxの違いと使い分けは？ / Context API和Redux的区别与使用场景？",
-          "a": "Context API:\n・Reactビルトイン、追加ライブラリ不要\n・小〜中規模アプリに適切\n・頻繁に更新される値には不向き（全消費コンポーネントが再レンダリング）\n\nRedux:\n・大規模アプリ、複雑な状態管理に適切\n・DevToolsでデバッグしやすい\n・boilerplateが多いが、Redux Toolkitで軽減\n\n使い分け:\n・テーマ・言語・ユーザー情報 → Context\n・複雑なビジネスロジック・頻繁更新 → Redux / Context API:\n・React内置，无需额外库\n・适合中小型应用\n・不适合频繁更新的值（会导致所有消费组件重新渲染）\n\nRedux:\n・适合大型应用、复杂的状态管理\n・使用DevTools易于调试\n・样板代码多，但可用Redux Toolkit减轻\n\n使用场景区分:\n・主题、语言、用户信息 → Context\n・复杂的业务逻辑、频繁更新 → Redux",
+          "a": "在我参与的项目（大学入学管理系统）中，用户登录信息、语言设置用 Context，表单多步骤状态、数据缓存用 Redux Toolkit —— 两者不是竞争关系，而是各司其职。",
           "cn": "",
           "tag": "状態管理",
           "mastery": 0
